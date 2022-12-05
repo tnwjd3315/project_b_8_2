@@ -61,7 +61,32 @@
         function show_comment() {
             $.ajax({
                 type: 'GET',
-                url: '/codes/:post_id/comment/:comment_id/comment_reply',
+                url: '/comment',
+                data: {},
+                success: function (response) {
+                    let rows = response["all_comments"]
+                    for (let i = 0; i < rows.length; i++) {
+                        let comment_id = rows[i]["comment_id"]
+                        let comment = rows[i]["comment"]
+                        let star = rows[i]["star"]
+
+                        let star_image = "*".repeat(star)
+
+                        let temp_html = `<tr>
+                                            <td>${comment_id}</td>
+                                            <td>${comment}</td>
+                                            <td>${star_image}</td>
+                                        </tr>`
+                        $("#comment_box").append(temp_html)
+                    }
+                }
+            });
+        }
+
+        function show_comment() {
+            $.ajax({
+                type: 'GET',
+                url: '/comment',
                 data: {},
                 success: function (response) {
                     let rows = response["all_comments"]
@@ -86,12 +111,12 @@
         function save_comment() {
             let comment_id = $("#comment_id").val()
             let comment = $("#comment").val()
-            let star = rows[i]["star"]
+            let star = comment[i]["star"]
             let star_image = "*".repeat(star)
 
             $.ajax({
                 type: 'POST',
-                url: '/codes/:post_id/comment/:comment_id/comment_reply/:comment_reply_id',
+                url: '/comment',
                 data: {comment_id_give: comment_id, comment_give: comment,star_give: star},
                 success: function (response) {
                     alert(response['msg'])
@@ -108,7 +133,7 @@
     <h3>내가 쓴 코드를 자랑해 보아요</h3>
     <p>
         회원님은 이 문제를 어떻게 푸셨나요?<br/>
-        회원님의 코드를 댓글로 남겨 다른 이들과 공유해 보아요!</p><p>
+        내가 쓴 코드를 댓글로 남겨 다른 이들과 공유해 보아요!</p><p>
         문제 풀이가 아니더라도 자유롭게 의견을 남겨주셔도 좋습니다.
     </p>
     <div class="comment-info">

@@ -4,9 +4,6 @@ import json
 
 app = Flask(__name__)
 
-
-import pymysql
-
 db = pymysql.connect(host='localhost', user='root', password='Rotorrl1!', port=3306)
 cursor = db.cursor()
 sql = """
@@ -15,19 +12,19 @@ sql = """
     """
 cursor.execute(sql)
 result = cursor.fetchall()
-for data in result:
-    print(data)
 
 @app.route('/')
 def home():
     return render_template('comment.html')
 
 
-@app.route("/codes/:post_id/comment/:comment_id/comment_reply/:comment_reply_id", methods=["POST"])
+@app.route("/comment", methods=["POST"])
 def web_comment_reply_post():
     comment_id_receive = request.form['comment_id_give']
     comment_receive = request.form['comment_give']
     star_receive = request.form['star_give']
+
+    print(comment_id_receive)
 
     doc = {
         'comment_id': comment_id_receive,
@@ -35,15 +32,19 @@ def web_comment_reply_post():
         'star': star_receive
     }
     db.comment_reply.insert_one(doc)
-
+    print(doc)
     return jsonify({'msg': '댓글 달기 완료!'})
 
 
-@app.route("/codes/:post_id/comment/:comment_id/comment_reply", methods=["GET"])
+@app.route("/comment", methods=["GET"])
 def web_comment_reply_get():
-    all_comments = list(db.comment_reply.find({}, {'_id': False}))
-    return jsonify({'all_comments': all_comments})
+    #all_comments = list(comment_reply.find({}, {'_id': False}))
+    #print(all_comments)
+    #return jsonify({'all_comments': all_comments})
+    return jsonify({'msg': '댓글 달기 완료!'})
+
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
+
 
 
