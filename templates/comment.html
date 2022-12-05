@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+
+    <title>댓글을 남겨보자</title>
+
+    <style>
+        * {
+            font-family: 'Gowun Batang', serif;
+            color: white;
+        }
+
+        body {
+            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+            url('https://miro.medium.com/max/1200/1*6fZvk-nXvwgfieisFZ_uJA.png');
+            background-position: center;
+            background-size: cover;
+        }
+
+        h1 {
+            font-weight: bold;
+        }
+
+        .comment {
+            width: 500px;
+            margin: 60px auto 0px auto;
+            padding-bottom: 60px;
+            text-align: center;
+        }
+
+        .mybtn {
+            width: 100%;
+        }
+
+        .comment > table {
+            margin: 40px 0;
+            font-size: 18px;
+        }
+
+        option {
+            color: black;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            show_comment();
+        });
+
+        function show_comment() {
+            $.ajax({
+                type: 'GET',
+                url: '/codes/:post_id/comment/:comment_id/comment_reply',
+                data: {},
+                success: function (response) {
+                    let rows = response["all_comments"]
+                    for (let i = 0; i < rows.length; i++) {
+                        let comment_id = rows[i]["comment_id"]
+                        let comment = rows[i]["comment"]
+                        let star = rows[i]["star"]
+
+                        let star_image = "*".repeat(star)
+
+                        let temp_html = `<tr>
+                                            <td>${comment_id}</td>
+                                            <td>${comment}</td>
+                                            <td>${star_image}</td>
+                                        </tr>`
+                        $("#comment_box").append(temp_html)
+                    }
+                }
+            });
+        }
+
+        function save_comment() {
+            let comment_id = $("#comment_id").val()
+            let comment = $("#comment").val()
+            let star = rows[i]["star"]
+            let star_image = "*".repeat(star)
+
+            $.ajax({
+                type: 'POST',
+                url: '/codes/:post_id/comment/:comment_id/comment_reply/:comment_reply_id',
+                data: {comment_id_give: comment_id, comment_give: comment,star_give: star},
+                success: function (response) {
+                    alert(response['msg'])
+                    window.location.reload()
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="mask"></div>
+<div class="comment">
+    <h1>나도 풀어보기!</h1>
+    <h3>내가 쓴 코드를 자랑해 보아요</h3>
+    <p>
+        회원님은 이 문제를 어떻게 푸셨나요?<br/>
+        회원님의 코드를 댓글로 남겨 다른 이들과 공유해 보아요!</p><p>
+        문제 풀이가 아니더라도 자유롭게 의견을 남겨주셔도 좋습니다.
+    </p>
+    <div class="comment-info">
+        <div class="input-group mb-3">
+            <span class="input-group-text">닉네임</span>
+            <input id="comment_id" type="text" class="form-control">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">내용</span>
+            <input id="comment" type="text" class="form-control">
+        </div>
+
+
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="star">난이도</label>
+            <select class="form-select" id="star">
+                <option selected>-- 내가 느낀 이 문제의 난이도 --</option>
+                <option value="1">⭐</option>
+                <option value="2">⭐⭐</option>
+                <option value="3">⭐⭐⭐</option>
+                <option value="4">⭐⭐⭐⭐</option>
+                <option value="5">⭐⭐⭐⭐⭐</option>
+            </select>
+        </div>
+        <button onclick="save_comment()" type="button" class="btn btn-warning mybtn">댓글 달기</button>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">닉네임</th>
+            <th scope="col">내용</th>
+        </tr>
+        </thead>
+        <tbody id="comment_box">
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
