@@ -56,50 +56,27 @@
     <script>
         $(document).ready(function () {
             show_comment();
+            // save_comment();
         });
 
         function show_comment() {
+
             $.ajax({
                 type: 'GET',
                 url: '/comment',
                 data: {},
                 success: function (response) {
-                    let rows = response["all_comments"]
-                    for (let i = 0; i < rows.length; i++) {
-                        let comment_id = rows[i]["comment_id"]
-                        let comment = rows[i]["comment"]
-                        let star = rows[i]["star"]
-
+                    let doc = JSON.parse(response)
+                    console.log(doc)
+                    for (let i = 0; i < doc.length; i++) {
+                        let comment_title = doc[i]["comment_title"]
+                        let comment_content = doc[i]["comment_content"]
+                        let star = doc[i]["star"]
                         let star_image = "*".repeat(star)
 
                         let temp_html = `<tr>
-                                            <td>${comment_id}</td>
-                                            <td>${comment}</td>
-                                            <td>${star_image}</td>
-                                        </tr>`
-                        $("#comment_box").append(temp_html)
-                    }
-                }
-            });
-        }
-
-        function show_comment() {
-            $.ajax({
-                type: 'GET',
-                url: '/comment',
-                data: {},
-                success: function (response) {
-                    let rows = response["all_comments"]
-                    for (let i = 0; i < rows.length; i++) {
-                        let comment_id = rows[i]["comment_id"]
-                        let comment = rows[i]["comment"]
-                        let star = rows[i]["star"]
-
-                        let star_image = "*".repeat(star)
-
-                        let temp_html = `<tr>
-                                            <td>${comment_id}</td>
-                                            <td>${comment}</td>
+                                            <td>${comment_title}</td>
+                                            <td>${comment_content}</td>
                                             <td>${star_image}</td>
                                         </tr>`
                         $("#comment_box").append(temp_html)
@@ -109,15 +86,21 @@
         }
 
         function save_comment() {
-            let comment_id = $("#comment_id").val()
-            let comment = $("#comment").val()
-            let star = comment[i]["star"]
+            let comment_title = $("#comment_title").val()
+            let comment_content = $("#comment_content").val()
+            let star = $(`#star`).val()
             let star_image = "*".repeat(star)
+            console.log(comment_title, comment_content)
 
             $.ajax({
                 type: 'POST',
                 url: '/comment',
-                data: {comment_id_give: comment_id, comment_give: comment,star_give: star},
+                // dataType : "json",
+                // data : JSON.stringify({comment_title: comment_title, comment_content: comment_content,star: star}),
+                // success:function(response){
+                //     alert(response['msg'])
+                //     window.location.reload()
+                data: {comment_title: comment_title,comment_content: comment_content,star: star},
                 success: function (response) {
                     alert(response['msg'])
                     window.location.reload()
@@ -138,15 +121,13 @@
     </p>
     <div class="comment-info">
         <div class="input-group mb-3">
-            <span class="input-group-text">닉네임</span>
-            <input id="comment_id" type="text" class="form-control">
+            <span class="input-group-text">제목</span>
+            <input id="comment_title" type="text" class="form-control">
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text">내용</span>
-            <input id="comment" type="text" class="form-control">
+            <input id="comment_content" type="text" class="form-control" style="height: 150px">
         </div>
-
-
         <div class="input-group mb-3">
             <label class="input-group-text" for="star">난이도</label>
             <select class="form-select" id="star">
