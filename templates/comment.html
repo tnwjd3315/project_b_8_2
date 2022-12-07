@@ -67,25 +67,32 @@
                 data: {},
                 success: function (response) {
                     let doc = JSON.parse(response)
+                    console.log(doc)
                     // console.log(response)
                     for (let i = 0; i < doc.length; i++) {
-                        let comment_title = doc[i][5]
-                        let comment_content = doc[i][1]
-                        let star = doc[i][2]
+                        let user_id = doc[i][2]
+                        let comment_title = doc[i][1]
+                        let comment_content = doc[i][3]
+                        let star = doc[i][4]
                         let star_image = "*".repeat(star)
 
                         let temp_html = `<tr>
+                                            <td>${user_id}</td>
                                             <td>${comment_title}</td>
                                             <td>${comment_content}</td>
                                             <td>${star_image}</td>
+                                            <td><button id="patch_button" onclick="patch_comment()" type="button" class="btn btn-warning mybtn" style="width:60px">수정</button>
+                                            <button id="delete_button" onclick="delete_comment()" type="button" class="btn btn-warning mybtn" style="width:60px">삭제</button></td>
                                         </tr>`
                         $("#comment_box").append(temp_html)
                     }
                 }
+
             });
         }
 
         function save_comment() {
+            let user_id = $("#user_id").val()
             let comment_title = $("#comment_title").val()
             let comment_content = $("#comment_content").val()
             let star = $(`#star`).val()
@@ -100,6 +107,42 @@
                 // success:function(response){
                 //     alert(response['msg'])
                 //     window.location.reload()
+                data: {user_id:user_id, comment_title: comment_title,comment_content: comment_content,star: star},
+                success: function (response) {
+                    alert(response['msg'])
+                    window.location.reload()
+                }
+            });
+        }
+
+        function patch_comment() {
+            let user_id = $("#user_id").val()
+            let comment_title = $("#comment_title").val()
+            let comment_content = $("#comment_content").val()
+            let star = $(`#star`).val()
+            let star_image = "*".repeat(star)
+
+            $.ajax({
+                type: 'PATCH',
+                url: '/comment',
+                data: {comment_title: comment_title,comment_content: comment_content,star: star},
+                success: function (response) {
+                    alert(response['msg'])
+                    window.location.reload()
+                }
+            });
+        }
+
+        function delete_comment() {
+            let user_id = $("#user_id").val()
+            let comment_title = $("#comment_title").val()
+            let comment_content = $("#comment_content").val()
+            let star = $(`#star`).val()
+            let star_image = "*".repeat(star)
+
+            $.ajax({
+                type: 'DELETE',
+                url: '/comment',
                 data: {comment_title: comment_title,comment_content: comment_content,star: star},
                 success: function (response) {
                     alert(response['msg'])
@@ -142,15 +185,20 @@
     <table class="table">
         <thead>
         <tr>
+            <th scope="col">아이디</th>
             <th scope="col">제목</th>
             <th scope="col">내용</th>
             <th scope="col">별점</th>
-            # 아이디, 수정, 삭제 버튼 및 기능 구현 필요함
+            <th scope="col">수정 및 삭제</th>
+            # 댓글 수정, 삭제 버튼 및 기능 구현 필요함
+
         </tr>
         </thead>
         <tbody id="comment_box">
         </tbody>
+
     </table>
+
 </div>
 </body>
 </html>
