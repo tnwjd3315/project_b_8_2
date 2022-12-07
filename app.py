@@ -11,15 +11,15 @@ def home():
 
 @app.route("/comment", methods=["POST"])
 def insert_comment():
-    db = pymysql.connect(host='localhost', user='root', password='Rotorrl1!', db="new_project", port=3306)
+    db = pymysql.connect(host='hjdb.cmux79u98wpg.us-east-1.rds.amazonaws.com', user='master', password='Abcd!234', db="hjdb", port=3306)
     cursor = db.cursor()
-    print("hello1")
+    # print("hello1")
     # comment = request.json
 
     comment_title = request.form["comment_title"]
     comment_content = request.form["comment_content"]
     star = request.form["star"]
-    print(comment_title, comment_content, star)
+    # print(comment_title, comment_content, star)
 
     # sql = """insert into comment (comment_id,comment_content,star)values (%s,%s,%s)"""
     # cursor.execute(sql, (comment_id, comment_content, star))
@@ -33,9 +33,9 @@ def insert_comment():
     # comment_receive = request.form['comment_content_give']
     # star_receive = request.form['star_give']
 
-    sql = """insert into comment (comment_title,comment_content,star)values (%s,%s,%s)"""
+    sql = """insert into comment (comment_title,comment_content,star, user_id,problem_id,review_id)values (%s,%s,%s,%s,%s,%s)"""
 
-    cursor.execute(sql, (comment_title, comment_content, star))
+    cursor.execute(sql, (comment_title, comment_content, star,11,22,33))
     db.commit()
     db.close()
     return jsonify({'msg': '댓글 달기 완료!'})
@@ -43,11 +43,11 @@ def insert_comment():
 
 @app.route("/comment", methods=["GET"])
 def get_comments():
-    db = pymysql.connect(host='localhost', user='root', password='Rotorrl1!', port=3306)
+    db = pymysql.connect(host='hjdb.cmux79u98wpg.us-east-1.rds.amazonaws.com', user='master', password='Abcd!234', db="hjdb", port=3306)
     cursor = db.cursor()
     sql = """
         SELECT *
-        FROM new_project.comment
+        FROM hjdb.comment
         """
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -57,6 +57,7 @@ def get_comments():
 
     db.commit()
     db.close()
+    print(json_str)
     return json_str,200
 
 # 서버실행
