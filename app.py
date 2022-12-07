@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, flash, session
+from flask import Flask, render_template, request, jsonify, session
 import pymysql
 import json
 
@@ -17,13 +17,17 @@ def home():
 def insert_comment():
     db = pymysql.connect(host='hjdb.cmux79u98wpg.us-east-1.rds.amazonaws.com', user='master', password='Abcd!234', db="hjdb", port=3306)
     cursor = db.cursor()
-    # print("hello1")
-    # comment = request.json
 
     comment_title = request.form["comment_title"]
     comment_content = request.form["comment_content"]
     star = request.form["star"]
-    # print(comment_title, comment_content, star)
+    # user_unique_id = request.form["user_unique_id"]
+    # problem_id = request.form["problem_id"]
+    # review_id = request.form["review_id"]
+
+    # comment_id_receive = request.form['comment_id_give']
+    # comment_receive = request.form['comment_content_give']
+    # star_receive = request.form['star_give'
 
     # sql = """insert into comment (comment_id,comment_content,star)values (%s,%s,%s)"""
     # cursor.execute(sql, (comment_id, comment_content, star))
@@ -31,15 +35,13 @@ def insert_comment():
     # json_str = json.dumps(rows, indent=4, sort_keys=True, default=str)
     # db.commit()
     # db.close()
-    # return 'insert success', 200
+    # return 'insert success', 200]
 
-    # comment_id_receive = request.form['comment_id_give']
-    # comment_receive = request.form['comment_content_give']
-    # star_receive = request.form['star_give']
-
+    #sql = """insert into comment (comment_title,comment_content,star)values (%s,%s,%s)"""
     sql = """insert into comment (comment_title,comment_content,star, user_unique_id,problem_id,review_id)values (%s,%s,%s,%s,%s,%s)"""
 
     cursor.execute(sql, (comment_title, comment_content, star,1,1,1))
+    # user_unique_id, problem_id, review_id
     db.commit()
     db.close()
     return jsonify({'msg': '댓글 달기 완료!'})
@@ -64,25 +66,33 @@ def get_comments():
     db.close()
     return json_str,200
 
+@app.route("/edit")
+def edit_comment_page():
+    return render_template('edit.html')
 
-@app.route("/comment", methods=["PATCH"])
-def patch_comment():
+@app.route("/comment", methods=["UPDATE"])
+def update_comment():
+
     db = pymysql.connect(host='hjdb.cmux79u98wpg.us-east-1.rds.amazonaws.com', user='master', password='Abcd!234', db="hjdb", port=3306)
     cursor = db.cursor()
 
     comment_title = request.form["comment_title"]
     comment_content = request.form["comment_content"]
     star = request.form["star"]
+    comment_id = request.form["comment_id"]
 
     sql = """UPDATE comment
-	set comment_content = "new content", comment_title = "new title",star = 2
-	where user_unique_id = 1; """
+	set comment_content = (%s), comment_title = (%s),star = (%s)
+	where comment_id = (%s)"""
+
+
+
+	# where user_unique_id = '$(sessionID)'
     # user_unique_id 대신 user_id를 가져오는 방법?
 
-    cursor.execute(sql)
+    cursor.execute(sql, (comment_content, comment_title, star, comment_id))
     db.commit()
     db.close()
-    # 해당 댓글 수정하는 창 새로 띄우기, post 다시 하기
     return jsonify({'msg': '댓글이 정상적으로 수정되었습니다.'})
 
 @app.route("/comment", methods=["DELETE"])
@@ -90,15 +100,12 @@ def delete_comment():
     db = pymysql.connect(host='hjdb.cmux79u98wpg.us-east-1.rds.amazonaws.com', user='master', password='Abcd!234', db="hjdb", port=3306)
     cursor = db.cursor()
 
-    comment_title = request.form["comment_title"]
-    comment_content = request.form["comment_content"]
-    star = request.form["star"]
+    comment_id = request.form["comment_id"]
 
-    sql = """DELETE from comment where user_unique_id = 1;"""
+    sql = """DELETE from comment where comment_id = %s;"""
     # user_unique_id 대신 user_id를 가져오는 방법?
     # user_id = '$(sessionID)' 비교하는 방법?
-
-    cursor.execute(sql)
+    cursor.execute(sql, comment_id)
     db.commit()
     db.close()
 

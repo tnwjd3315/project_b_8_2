@@ -14,7 +14,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
 
-    <title>댓글을 남겨보자</title>
+    <title>댓글을 수정하자</title>
 
     <style>
         * {
@@ -53,6 +53,7 @@
             color: black;
         }
     </style>
+
     <script>
         $(document).ready(function () {
             show_comment();
@@ -98,10 +99,6 @@
             let comment_content = $("#comment_content").val()
             let star = $(`#star`).val()
             let star_image = "*".repeat(star)
-            let user_unique_id = $(`#user_unique_id`).val()
-            let problem_id = $(`#problem_id`).val()
-            let review_id = $(`#review_id`).val()
-
             console.log(comment_title, comment_content)
 
             $.ajax({
@@ -112,8 +109,7 @@
                 // success:function(response){
                 //     alert(response['msg'])
                 //     window.location.reload()
-                data: {user_id:user_id, comment_title: comment_title,comment_content: comment_content,star: star,
-                    user_unique_id:user_unique_id, problem_id: problem_id, review_id: review_id},
+                data: {user_id:user_id, comment_title: comment_title,comment_content: comment_content,star: star},
                 success: function (response) {
                     alert(response['msg'])
                     window.location.reload()
@@ -122,17 +118,17 @@
         }
 
         function update_comment(comment_id) {
-
-            let comment_title = prompt("message", "입력")
-            let comment_content = prompt("message", "입력")
-            let star = prompt("message", "입력")
+            let user_id = $("#user_id").val()
+            let comment_title = $("#comment_title").val()
+            let comment_content = $("#comment_content").val()
+            let star = $(`#star`).val()
+            let star_image = "*".repeat(star)
             let id = comment_id
 
             $.ajax({
                 type: 'UPDATE',
                 url: '/comment',
-                data: {comment_title: comment_title,comment_content: comment_content,star: star,comment_id: id},
-                // data: {comment_title: comment_title,comment_content: comment_content,star: star, comment_id: id},
+                data: {comment_title: comment_title,comment_content: comment_content,star: star, comment_id: id},
                 success: function (response) {
                     alert(response['msg'])
                     window.location.reload()
@@ -142,12 +138,16 @@
         }
 
         function delete_comment(comment_id) {
-            let id = comment_id
+            let user_id = $("#user_id").val()
+            let comment_title = $("#comment_title").val()
+            let comment_content = $("#comment_content").val()
+            let star = $(`#star`).val()
+            let star_image = "*".repeat(star)
 
             $.ajax({
                 type: 'DELETE',
                 url: '/comment',
-                data: {'comment_id': id},
+                data: {comment_title: comment_title,comment_content: comment_content,star: star},
                 success: function (response) {
                     alert(response['msg'])
                     window.location.reload()
@@ -155,14 +155,11 @@
             });
         }
     </script>
-</head>
+
 <body>
 <div class="mask"></div>
 <div class="comment">
-    <h1>문제풀이에 대한 댓글</h1>
-    <p>
-        문제 ${problem_id}번 > 풀이 ${review_id}번<br/>
-    </p>
+    <h1>댓글 수정하기</h1>
 
     <div class="comment-info">
         <div class="input-group mb-3">
@@ -184,23 +181,9 @@
                 <option value="5">⭐⭐⭐⭐⭐</option>
             </select>
         </div>
-        <button onclick="save_comment()" type="button" class="btn btn-warning mybtn">댓글 달기</button>
+<!--        <button onclick="location.href = '/comment'" type="button" class="btn btn-warning mybtn">수정 완료하기</button>-->
+        <button onclick="update_comment(); location.href = '/'" type="button" class="btn btn-warning mybtn">수정 완료하기</button>
     </div>
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">아이디</th>
-            <th scope="col">제목</th>
-            <th scope="col">내용</th>
-            <th scope="col">별점</th>
-            <th scope="col">수정 및 삭제</th>
-
-        </tr>
-        </thead>
-        <tbody id="comment_box">
-        </tbody>
-
-    </table>
 
 </div>
 </body>
