@@ -58,9 +58,11 @@ def get_comments():
         """
     cursor.execute(sql)
     rows = cursor.fetchall()
+    print(rows)
 
     # python 객체를 json 데이터로 쓰기
     json_str = json.dumps(rows, indent=4, sort_keys=True, default=str, ensure_ascii=False)
+    print(json_str)
 
     db.commit()
     db.close()
