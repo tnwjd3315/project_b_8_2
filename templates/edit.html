@@ -55,102 +55,21 @@
     </style>
 
     <script>
-        $(document).ready(function () {
-            show_comment();
-            // save_comment();
-        });
-
-        function show_comment() {
-
-            $.ajax({
-                type: 'GET',
-                url: '/comment',
-                data: {},
-                success: function (response) {
-                    let doc = JSON.parse(response)
-                    console.log(doc)
-                    // console.log(response)
-                    for (let i = 0; i < doc.length; i++) {
-                        let comment_id = doc[i][0]
-                        let user_id = doc[i][2]
-                        let comment_title = doc[i][1]
-                        let comment_content = doc[i][3]
-                        let star = doc[i][4]
-                        let star_image = "*".repeat(star)
-
-                        let temp_html = `<tr>
-                                            <td>${user_id}</td>
-                                            <td>${comment_title}</td>
-                                            <td>${comment_content}</td>
-                                            <td>${star_image}</td>
-                                            <td><button id="update_button" onclick="location.href = '/edit'; update_comment(${comment_id})" type="button" class="btn btn-warning mybtn" style="width:60px">수정</button>
-                                            <button id="delete_button" onclick="delete_comment(${comment_id})" type="button" class="btn btn-warning mybtn" style="width:60px">삭제</button></td>
-                                        </tr>`
-                        $("#comment_box").append(temp_html)
-                    }
-                }
-
-            });
-        }
-
-        function save_comment() {
-            let user_id = $("#user_id").val()
-            let comment_title = $("#comment_title").val()
-            let comment_content = $("#comment_content").val()
-            let star = $(`#star`).val()
-            let star_image = "*".repeat(star)
-            console.log(comment_title, comment_content)
+        function update_comment() {
+            const commentTitle = $('#comment_title').val()
+            const commentContent = $('#comment_content').val()
+            const commentStar = $('#star').val()
+            console.log("print")
 
             $.ajax({
-                type: 'POST',
-                url: '/comment',
-                // dataType : "json",
-                // data : JSON.stringify({comment_title: comment_title, comment_content: comment_content,star: star}),
-                // success:function(response){
-                //     alert(response['msg'])
-                //     window.location.reload()
-                data: {user_id:user_id, comment_title: comment_title,comment_content: comment_content,star: star},
+                type: 'PATCH',
+                url: window.location.pathname,
+                data: JSON.stringify({'comment_title': commentTitle,'comment_content': commentContent,'star': commentStar}),
+                contentType: 'application/json',
+                // data: {comment_title: comment_title,comment_content: comment_content,star: star, comment_id: id},
                 success: function (response) {
-                    alert(response['msg'])
-                    window.location.reload()
-                }
-            });
-        }
-
-        function update_comment(comment_id) {
-            let user_id = $("#user_id").val()
-            let comment_title = $("#comment_title").val()
-            let comment_content = $("#comment_content").val()
-            let star = $(`#star`).val()
-            let star_image = "*".repeat(star)
-            let id = comment_id
-
-            $.ajax({
-                type: 'UPDATE',
-                url: '/comment',
-                data: {comment_title: comment_title,comment_content: comment_content,star: star, comment_id: id},
-                success: function (response) {
-                    alert(response['msg'])
-                    window.location.reload()
-                }
-
-            });
-        }
-
-        function delete_comment(comment_id) {
-            let user_id = $("#user_id").val()
-            let comment_title = $("#comment_title").val()
-            let comment_content = $("#comment_content").val()
-            let star = $(`#star`).val()
-            let star_image = "*".repeat(star)
-
-            $.ajax({
-                type: 'DELETE',
-                url: '/comment',
-                data: {comment_title: comment_title,comment_content: comment_content,star: star},
-                success: function (response) {
-                    alert(response['msg'])
-                    window.location.reload()
+                    // alert(response['msg'])
+                    window.location.href = '/'
                 }
             });
         }
@@ -181,10 +100,12 @@
                 <option value="5">⭐⭐⭐⭐⭐</option>
             </select>
         </div>
-<!--        <button onclick="location.href = '/comment'" type="button" class="btn btn-warning mybtn">수정 완료하기</button>-->
-        <button onclick="update_comment(); location.href = '/'" type="button" class="btn btn-warning mybtn">수정 완료하기</button>
+        <div>
+           <form method="PATCH" action="/edit">
+               <button onclick="update_comment()" type="button" class="btn btn-warning mybtn">수정 완료하기</button>
+            </form>
+        </div>
     </div>
-
 </div>
 </body>
 </html>

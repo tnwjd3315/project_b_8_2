@@ -82,7 +82,7 @@
                                             <td>${comment_title}</td>
                                             <td>${comment_content}</td>
                                             <td>${star_image}</td>
-                                            <td><button id="update_button" onclick="location.href = '/edit'; update_comment(${comment_id})" type="button" class="btn btn-warning mybtn" style="width:60px">수정</button>
+                                            <td><button id="update_button" onclick="location.href = '/edit/${comment_id}'; update_comment(${comment_title},${comment_content},${star})" type="button" class="btn btn-warning mybtn" style="width:60px">수정</button>
                                             <button id="delete_button" onclick="delete_comment(${comment_id})" type="button" class="btn btn-warning mybtn" style="width:60px">삭제</button></td>
                                         </tr>`
                         $("#comment_box").append(temp_html)
@@ -121,25 +121,6 @@
             });
         }
 
-        function update_comment(comment_id) {
-
-            let comment_title = prompt("message", "입력")
-            let comment_content = prompt("message", "입력")
-            let star = prompt("message", "입력")
-            let id = comment_id
-
-            $.ajax({
-                type: 'UPDATE',
-                url: '/comment',
-                data: {comment_title: comment_title,comment_content: comment_content,star: star,comment_id: id},
-                // data: {comment_title: comment_title,comment_content: comment_content,star: star, comment_id: id},
-                success: function (response) {
-                    alert(response['msg'])
-                    window.location.reload()
-                }
-
-            });
-        }
 
         function delete_comment(comment_id) {
             let id = comment_id
